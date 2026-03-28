@@ -53,10 +53,41 @@ public Terminal prochainTerminal() {
     return new Terminal(resultat);
   }
 
-  else {
-    ErreurLex("Erreur lexicale : caractère non reconnu '" + c + "' à la position " + this.position);
-    return null;
+  if (Character.isUpperCase(c)) {
+    String resultat = "";
+
+    while (this.resteTerminal()) {
+      char courant = this.expression.charAt(this.position);
+
+      if (Character.isLetter(courant)) {
+        resultat += courant;
+        this.position++;
+      }
+
+      else if (courant == '_') {
+        resultat += courant;
+        this.position++;
+        
+        if (this.resteTerminal() && Character.isLetter(this.expression.charAt(this.position))) {
+          resultat += this.expression.charAt(this.position);
+          this.position++;
+        } else {
+
+          this.ErreurLex("Erreur lexicale : un '_' doit obligatoirement être suivi d'une lettre.");
+          return null;
+        }
+      }
+
+      else {
+        break;
+      }
+    }
+    return new Terminal(resultat);
   }
+
+  ErreurLex("Erreur lexicale : caractère non reconnu '" + c + "' à la position " + this.position);
+  return null;
+
 }
 
  

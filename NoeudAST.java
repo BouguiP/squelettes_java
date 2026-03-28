@@ -32,9 +32,12 @@ public class NoeudAST extends ElemAST {
     } else if (this.operateur.equals("*")) {
       return valGauche * valDroite;
     } else if (this.operateur.equals("/")) {
+      if (valDroite == 0) {
+        this.ErreurEvalAST("Erreur d'évaluation : Division par zéro impossible.");
+        return 0;
+      }
       return valGauche / valDroite;
     } else {
-      // Au cas où un opérateur bizarre se glisse dans notre arbre
       this.ErreurEvalAST("Opérateur inconnu : " + this.operateur);
       return 0;
     }

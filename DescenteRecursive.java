@@ -7,6 +7,7 @@ package app6;
 public class DescenteRecursive {
 
   private AnalLex lexical;
+  private Terminal tCourant;
 
 /** Constructeur de DescenteRecursive :
       - recoit en argument le nom du fichier contenant l'expression a analyser
@@ -22,39 +23,75 @@ public DescenteRecursive(String in) {
  *    Elle retourne une reference sur la racine de l'AST construit
  */
 public ElemAST AnalSynt( ) {
-  return this.E();
+
+  this.tCourant = this.lexical.prochainTerminal();
+  ElemAST racine = this.E();
+
+  if (this.tCourant != null) {
+    this.ErreurSynt("Erreur syntaxique : symboles inattendus à la fin de l'expression.");
+  }
+  return racine;
 }
 
-public ElemAST E() {
-    // On commence toujours par lire un T
-    ElemAST noeud1 = T();
+  public ElemAST E() {
+    ElemAST noeud1 = T(); // On lit toujours un T en premier
 
-    // On regarde le prochain symbole
-    Terminal t = this.lexical.prochainTerminal();
+    // Si on observe un + ou un -
+    if (this.tCourant != null && (this.tCourant.chaine.equals("+") || this.tCourant.chaine.equals("-"))) {
+      String operateur = this.tCourant.chaine;
+      this.tCourant = this.lexical.prochainTerminal(); // On avance le curseur (on mange l'opérateur)
 
-    // Si on a un symbole et que c'est un "+"
-    if (t != null && t.chaine.equals("+")) {
-      ElemAST noeud2 = E();
-      return new NoeudAST(t.chaine, noeud1, noeud2);
+      ElemAST noeud2 = E(); // Appel récursif pour l'associativité à droite
+      return new NoeudAST(operateur, noeud1, noeud2);
     }
-    // Cas 2 : Il n'y a plus de symbole (fin de l'expression, t est null)
-    else if (t == null) {
-      return noeud1;
+
+    // Sinon, c'était juste un T tout seul
+    return noeud1;
+  }
+
+  public ElemAST T() {
+    ElemAST noeud1 = F(); // On lit toujours un F en premier
+
+    // Si on observe un * ou un /
+    if (this.tCourant != null && (this.tCourant.chaine.equals("*") || this.tCourant.chaine.equals("/"))) {
+      String operateur = this.tCourant.chaine;
+      this.tCourant = this.lexical.prochainTerminal(); // On avance le curseur
+
+      ElemAST noeud2 = T(); // Appel récursif
+      return new NoeudAST(operateur, noeud1, noeud2);
     }
-    // Cas 3 : Symbole inattendu (erreur de syntaxe)
+
+    return noeud1;
+  }
+
+  public ElemAST F() {
+    if (this.tCourant == null) {
+      this.ErreurSynt("Erreur syntaxique : opérande ou parenthèse manquante.");
+      return null;
+    }
+
+    // Cas 1 : ( E )
+    if (this.tCourant.chaine.equals("(")) {
+      this.tCourant = this.lexical.prochainTerminal(); // On mange la '('
+
+      ElemAST noeud = E(); // On analyse tout ce qui est à l'intérieur
+
+      // On s'attend obligatoirement à refermer la parenthèse
+      if (this.tCourant != null && this.tCourant.chaine.equals(")")) {
+        this.tCourant = this.lexical.prochainTerminal(); // On mange la ')'
+        return noeud; // On retourne le noeud intérieur (les parenthèses disparaissent de l'AST !)
+      } else {
+        this.ErreurSynt("Erreur syntaxique : parenthèse fermante ')' manquante.");
+        return null;
+      }
+    }
+    // Cas 2 : a (Un nombre ou un identifiant/variable)
     else {
-      this.ErreurSynt("Erreur syntaxique : '+' attendu, mais '" + t.chaine + "' trouvé.");
-      return null; // Requis pour la compilation
+      ElemAST feuille = new FeuilleAST(this.tCourant.chaine);
+      this.tCourant = this.lexical.prochainTerminal();
+      return feuille;
     }
-}
-
-public ElemAST T() {
-    // 1. On demande à l'analyseur de lire le prochain morceau (notre nombre "a")
-    Terminal t = this.lexical.prochainTerminal();
-
-    // 2. On utilise le texte de ce terminal pour créer et retourner la feuille
-    return new FeuilleAST(t.chaine);
-}
+  }
 
 /** ErreurSynt() envoie un message d'erreur syntaxique
  */
@@ -75,7 +112,7 @@ public void ErreurSynt(String s)
 
     try {
       java.io.FileWriter fw = new java.io.FileWriter("ExpArith.txt");
-      fw.write("101+71"); // Tu peux changer l'expression ici pour tester
+      fw.write("(2+8)*9/2"); // Tu peux changer l'expression ici pour tester
       fw.close();
     } catch (Exception e) {
       System.out.println("Impossible de créer le fichier de test.");
@@ -100,7 +137,7 @@ public void ErreurSynt(String s)
       e.printStackTrace();
       System.exit(51);
     }
-    System.out.println("Analyse syntaxique terminee");
+    System.out.println("Analyse syntaxique terminée");
   }
 
 }

@@ -1,2 +1,2 @@
-Lecture de l'AST trouve : (101+71)
-Evaluation de l'AST trouve : 172
+Lecture de l'AST trouve : ((2+8)*(9/2))
+Evaluation de l'AST trouve : 40

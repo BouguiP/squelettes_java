@@ -19,14 +19,20 @@ public class FeuilleAST extends ElemAST {
   /** Evaluation de feuille d'AST
    */
   public int EvalAST( ) {
-      return Integer.parseInt(this.operande);
+      if (Character.isDigit(this.operande.charAt(0))) {
+          return Integer.parseInt(this.operande);
+      }
+      else {
+          return 0;
+      }
   }
 
 
- /** Lecture de chaine de caracteres correspondant a la feuille d'AST
-  */
-  public String LectAST( ) {
-      return this.operande;
+    /**
+     * Lecture de chaine de caracteres correspondant a la feuille d'AST
+     */
+    public String LectAST() {
+        return this.operande;
   }
 
 }
