@@ -67,7 +67,7 @@ public Terminal prochainTerminal() {
       else if (courant == '_') {
         resultat += courant;
         this.position++;
-        
+
         if (this.resteTerminal() && Character.isLetter(this.expression.charAt(this.position))) {
           resultat += this.expression.charAt(this.position);
           this.position++;
@@ -77,7 +77,6 @@ public Terminal prochainTerminal() {
           return null;
         }
       }
-
       else {
         break;
       }
