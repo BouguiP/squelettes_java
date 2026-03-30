@@ -18,7 +18,10 @@ public class NoeudAST extends ElemAST {
     this.enfantDroit = droit;
   }
 
- 
+  public String Postfix() {
+    return this.enfantGauche.Postfix() + " " + this.enfantDroit.Postfix() + " " + this.operateur;
+  }
+
   /** Evaluation de noeud d'AST
    */
   public int EvalAST() {
@@ -42,7 +45,6 @@ public class NoeudAST extends ElemAST {
       return 0;
     }
   }
-
 
   /** Lecture de noeud d'AST
    */

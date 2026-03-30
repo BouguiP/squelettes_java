@@ -47,10 +47,13 @@ public Terminal prochainTerminal() {
   }
   char c = this.expression.charAt(this.position);
 
-  if (c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')') {
-    position++;
-    return new Terminal(String.valueOf(c));
-  }
+  if (c == '+') { position++; return new Terminal("+", "Addition"); }
+  if (c == '-') { position++; return new Terminal("-", "Soustraction"); }
+  if (c == '*') { position++; return new Terminal("*", "Multiplication"); }
+  if (c == '/') { position++; return new Terminal("/", "Division"); }
+  if (c == '(') { position++; return new Terminal("(", "ParentheseOuvrante"); }
+  if (c == ')') { position++; return new Terminal(")", "ParentheseFermante"); }
+
 
   if (Character.isDigit(c)) {
     String resultat = "";
@@ -58,7 +61,7 @@ public Terminal prochainTerminal() {
       resultat += this.expression.charAt(position);
       position++;
     }
-    return new Terminal(resultat);
+    return new Terminal(resultat,"Nombre");
   }
 
   if (Character.isUpperCase(c)) {
@@ -81,7 +84,8 @@ public Terminal prochainTerminal() {
           this.position++;
         } else {
 
-          this.ErreurLex("Erreur lexicale : un '_' doit obligatoirement être suivi d'une lettre.");
+          char recu = this.resteTerminal() ? this.expression.charAt(this.position) : ' ';
+          this.ErreurLex("Un tiret bas '_' doit être suivi d'une lettre.", "Lettre (a-z, A-Z)", recu);
           return null;
         }
       }
@@ -89,22 +93,26 @@ public Terminal prochainTerminal() {
         break;
       }
     }
-    return new Terminal(resultat);
+    return new Terminal(resultat,"Identificateur");
   }
 
-  ErreurLex("Erreur lexicale : caractère non reconnu '" + c + "' à la position " + this.position);
+  this.ErreurLex("Caractère non reconnu.", "Chiffre, Majuscule, Opérateur ou Parenthèse", c);
   return null;
 
 }
 
  
 /** ErreurLex() envoie un message d'erreur lexicale
- */ 
-  public void ErreurLex(String s) {
-    System.out.println(s);
-    System.exit(1);
-
-  }
+ */
+public void ErreurLex(String cause, String attendu, char recu) {
+  System.out.println("\n*** ERREUR LEXICALE ***");
+  String sequence = this.expression.substring(0, this.position);
+  System.out.println("Lieu : juste après la séquence \"" + sequence + "\"");
+  System.out.println("Cause : " + cause);
+  System.out.println("Caractère interdit reçu : '" + (recu == ' ' ? "Fin de fichier" : recu) + "'");
+  System.out.println("Caractères permis ici : " + attendu);
+  System.exit(1);
+}
 
   
   //Methode principale a lancer pour tester l'analyseur lexical

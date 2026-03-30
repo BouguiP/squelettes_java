@@ -15,6 +15,10 @@ public class FeuilleAST extends ElemAST {
         this.operande = c;
     }
 
+    public String Postfix() {
+        return this.operande;
+    }
+
   /** Evaluation de feuille d'AST
    */
   public int EvalAST( ) {
@@ -22,7 +26,7 @@ public class FeuilleAST extends ElemAST {
           return Integer.parseInt(this.operande);
       }
       else {
-          return 0;
+          throw new UnsupportedOperationException("Évaluation impossible : L'expression contient la variable '" + this.operande + "'. Tous les opérandes doivent être des valeurs.");
       }
   }
     /**

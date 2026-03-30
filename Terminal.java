@@ -8,8 +8,10 @@ package app6;
 public class Terminal {
 
   public String chaine;
+  public String type;
 
-  public Terminal(String c) {
+  public Terminal(String c, String type) {
     this.chaine = c;
+    this.type = type;
   }
 }
