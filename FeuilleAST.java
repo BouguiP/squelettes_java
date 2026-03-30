@@ -15,7 +15,6 @@ public class FeuilleAST extends ElemAST {
         this.operande = c;
     }
 
-
   /** Evaluation de feuille d'AST
    */
   public int EvalAST( ) {
@@ -26,8 +25,6 @@ public class FeuilleAST extends ElemAST {
           return 0;
       }
   }
-
-
     /**
      * Lecture de chaine de caracteres correspondant a la feuille d'AST
      */

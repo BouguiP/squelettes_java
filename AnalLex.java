@@ -37,6 +37,14 @@ public Terminal prochainTerminal() {
   if (!this.resteTerminal()) {
     return null;
   }
+
+  while (this.resteTerminal() && this.expression.charAt(this.position) == ' ') {
+    this.position++;
+  }
+
+  if (!this.resteTerminal()) {
+    return null;
+  }
   char c = this.expression.charAt(this.position);
 
   if (c == '+' || c == '-' || c == '*' || c == '/' || c == '(' || c == ')') {

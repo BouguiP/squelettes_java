@@ -101,8 +101,6 @@ public void ErreurSynt(String s)
   System.exit(1);
 }
 
-
-
   //Methode principale a lancer pour tester l'analyseur syntaxique.
   public static void main(String[] args) {
     String toWriteLect = "";
@@ -112,7 +110,7 @@ public void ErreurSynt(String s)
 
     try {
       java.io.FileWriter fw = new java.io.FileWriter("ExpArith.txt");
-      fw.write("(2+8)*9/2"); // Tu peux changer l'expression ici pour tester
+      fw.write("( 2 + 8 ) * 9 / 2");
       fw.close();
     } catch (Exception e) {
       System.out.println("Impossible de créer le fichier de test.");
