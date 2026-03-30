@@ -124,16 +124,6 @@ public void ErreurSynt(String cause, String recu, String attendu) {
 
     System.out.println("Debut d'analyse syntaxique");
 
-    try {
-      java.io.FileWriter fw = new java.io.FileWriter("ExpArith.txt");
-      fw.write("(U_x-V_y)*W_z/35");
-      fw.write("(55-47)*14/2");
-      fw.write("(u_x-)*W_z/35");
-      fw.close();
-    } catch (Exception e) {
-      System.out.println("Impossible de créer le fichier de test.");
-    }
-
     if (args.length == 0){
       args = new String [2];
       args[0] = "ExpArith.txt";

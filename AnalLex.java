@@ -47,19 +47,19 @@ public Terminal prochainTerminal() {
   }
   char c = this.expression.charAt(this.position);
 
-  if (c == '+') { position++; return new Terminal("+", "Addition"); }
-  if (c == '-') { position++; return new Terminal("-", "Soustraction"); }
-  if (c == '*') { position++; return new Terminal("*", "Multiplication"); }
-  if (c == '/') { position++; return new Terminal("/", "Division"); }
-  if (c == '(') { position++; return new Terminal("(", "ParentheseOuvrante"); }
-  if (c == ')') { position++; return new Terminal(")", "ParentheseFermante"); }
+  if (c == '+') { this.position++; return new Terminal("+", "Addition"); }
+  if (c == '-') { this.position++; return new Terminal("-", "Soustraction"); }
+  if (c == '*') { this.position++; return new Terminal("*", "Multiplication"); }
+  if (c == '/') { this.position++; return new Terminal("/", "Division"); }
+  if (c == '(') { this.position++; return new Terminal("(", "ParentheseOuvrante"); }
+  if (c == ')') { this.position++; return new Terminal(")", "ParentheseFermante"); }
 
 
   if (Character.isDigit(c)) {
     String resultat = "";
-    while (this.resteTerminal() && Character.isDigit(this.expression.charAt(position))) {
-      resultat += this.expression.charAt(position);
-      position++;
+    while (this.resteTerminal() && Character.isDigit(this.expression.charAt(this.position))) {
+      resultat += this.expression.charAt(this.position);
+      this.position++;
     }
     return new Terminal(resultat,"Nombre");
   }
