@@ -101,7 +101,7 @@ public ElemAST AnalSynt( ) {
       return feuille;
     }
     else {
-      this.ErreurSynt("Unité lexicale non permise ici.", this.tCourant.chaine, "Nombre, Variable ou '('");
+      this.ErreurSynt("Unité lexicale non permise ici.", this.tCourant.chaine, "Nombre, Variable");
       return null;
     }
   }
@@ -117,33 +117,43 @@ public void ErreurSynt(String cause, String recu, String attendu) {
   System.exit(1);
 }
 
-  //Methode principale a lancer pour tester l'analyseur syntaxique.
+  // Methode principale a lancer pour tester l'analyseur syntaxique (VALIDATION PDF).
   public static void main(String[] args) {
-    String toWriteLect = "";
-    String toWriteEval = "";
+    // Les 3 tests demandés par le professeur dans validation_am.pdf
+    String[] tests = {
+            "(U_x-V_y)*W_z/35",     // 1. AST sans erreur (avec variables)
+            "(55-47)*14/2",         // 2. AST sans erreur (nombres purs, évaluation possible)
+            "(U_x-)*W_z/35"         // 3. Erreur syntaxique attendue (on simule l'erreur du PDF)
+    };
 
-    System.out.println("Debut d'analyse syntaxique");
+    for (int i = 0; i < tests.length; i++) {
+      System.out.println("\n\n--- ANALYSE DE L'EXPRESSION " + (i+1) + " : " + tests[i] + " ---");
 
-    if (args.length == 0){
-      args = new String [2];
-      args[0] = "ExpArith.txt";
-      args[1] = "ResultatSyntaxique.txt";
+      // 1. On écrit l'expression dans le fichier
+      try {
+        java.io.FileWriter fw = new java.io.FileWriter("ExpArith.txt");
+        fw.write(tests[i]);
+        fw.close();
+      } catch (Exception e) {
+        System.out.println("Impossible de créer le fichier de test.");
+      }
+
+      // 2. On lance l'analyse
+      DescenteRecursive dr = new DescenteRecursive("ExpArith.txt");
+      try {
+        ElemAST arbre = dr.AnalSynt();
+        System.out.println("- Lecture de l'AST construit : " + arbre.LectAST());
+        System.out.println("- Expression postfix de l'AST construit : " + arbre.Postfix());
+
+        try {
+          System.out.println("- Évaluation de l'AST construit : " + arbre.EvalAST());
+        } catch (UnsupportedOperationException e) {
+          System.out.println("- Évaluation de l'AST construit : \n  -> " + e.getMessage());
+        }
+      } catch (Exception e) {
+        // Le programme s'arrête de lui-même avec System.exit(1) dans ErreurSynt ou ErreurLex
+      }
     }
-    DescenteRecursive dr = new DescenteRecursive(args[0]);
-    try {
-      ElemAST RacineAST = dr.AnalSynt();
-      toWriteLect += "Lecture de l'AST trouve : " + RacineAST.LectAST() + "\n";
-      System.out.println(toWriteLect);
-      toWriteEval += "Evaluation de l'AST trouve : " + RacineAST.EvalAST() + "\n";
-      System.out.println(toWriteEval);
-      Writer w = new Writer(args[1],toWriteLect+toWriteEval);
-
-    } catch (Exception e) {
-      System.out.println(e);
-      e.printStackTrace();
-      System.exit(51);
-    }
-    System.out.println("Analyse syntaxique terminée");
   }
 
 }

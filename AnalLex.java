@@ -114,28 +114,25 @@ public void ErreurLex(String cause, String attendu, char recu) {
   System.exit(1);
 }
 
+
   
-  //Methode principale a lancer pour tester l'analyseur lexical
   public static void main(String[] args) {
-    String toWrite = "";
-    System.out.println("Debut d'analyse lexicale");
-    if (args.length == 0){
-    args = new String [2];
-            args[0] = "ExpArith.txt";
-            args[1] = "ResultatLexical.txt";
+
+    String[] tests = {
+            "(U_x+V_y)*W_z/35",
+            "(U_x+V_y)*W__z/35"
+    };
+
+    for (int i = 0; i < tests.length; i++) {
+      System.out.println("\n--- Expression arithmétique : " + tests[i] + " ---");
+      System.out.println("Unités lexicales retournées :");
+      AnalLex lexical = new AnalLex(tests[i]);
+      while(lexical.resteTerminal()){
+        Terminal t = lexical.prochainTerminal();
+        if (t != null) {
+          System.out.println(t.type + " " + t.chaine);
+        }
+      }
     }
-    Reader r = new Reader(args[0]);
-
-    AnalLex lexical = new AnalLex(r.toString()); // Creation de l'analyseur lexical
-
-    // Execution de l'analyseur lexical
-    Terminal t = null;
-    while(lexical.resteTerminal()){
-      t = lexical.prochainTerminal();
-      toWrite +=t.chaine + "\n" ;  // toWrite contient le resultat
-    }				   //    d'analyse lexicale
-    System.out.println(toWrite); 	// Ecriture de toWrite sur la console
-    Writer w = new Writer(args[1],toWrite); // Ecriture de toWrite dans fichier args[1]
-    System.out.println("Fin d'analyse lexicale");
   }
 }
